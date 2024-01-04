@@ -26,14 +26,13 @@ export const datasetOptions = [
   {
     pivotColumn: "retention_year",
     label: "Retention Rates",
-    containsRates: true,
     value: "retention",
+    containsRates: true,
   },
   {
     pivotColumn: "cohort_term",
     label: "Graduation Rates",
     value: "graduation",
-    containsRates: true,
   },
   {
     label: "Credit Hours",

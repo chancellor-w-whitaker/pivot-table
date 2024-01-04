@@ -41,40 +41,34 @@ export const deriveValuesFromData = (data, pivotColumn) => {
       (entryA, entryB) => entryB[1] - entryA[1]
     )[0][0];
 
-  const typedColumns = Object.entries(columnTypesCounted)
+  const typedCols = Object.entries(columnTypesCounted)
     .map(([field, types]) => ({
       type: getMostFrequentType(types),
       field,
     }))
     .filter(({ field }) => field !== pivotColumn);
 
-  const measureColumns = typedColumns.filter(({ type }) => type === "number");
+  const measureColumns = typedCols.filter(({ type }) => type === "number");
 
-  const summaryColumns = typedColumns.filter(({ type }) => type === "string");
+  const summaryColumns = typedCols.filter(({ type }) => type === "string");
 
-  const setOfSummaryColumns = new Set(summaryColumns.map(({ field }) => field));
-
-  const getListGroupOptions = (arr) =>
+  const getListGroupOpts = (arr) =>
     arr.map(({ field }) => ({
       label: toTitleCase(field),
       value: field,
     }));
 
-  const summaryColumnOptions = getListGroupOptions(summaryColumns);
+  const summaryColumnOptions = getListGroupOpts(summaryColumns);
 
-  const measureOptions = getListGroupOptions(measureColumns);
+  const measureOptions = getListGroupOpts(measureColumns);
 
   const pivotValues = [...setOfPivotValues];
 
-  const allColumnDefs = [
-    ...summaryColumns.map(({ field }) => ({ field })),
-    ...pivotValues.map((field) => ({ field })),
-  ];
+  const columnDefs = [...summaryColumns.m];
 
   return {
     summaryColumnOptions,
-    setOfSummaryColumns,
     measureOptions,
-    allColumnDefs,
+    pivotValues,
   };
 };

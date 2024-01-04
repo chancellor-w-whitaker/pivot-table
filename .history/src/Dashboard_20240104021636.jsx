@@ -1,17 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
 
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
-import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
-import { wrapBreakpoint } from "./constants/wrapBreakpoint";
-import { defaultColDef } from "./constants/defaultColDef";
-import { pivotData } from "./functions/pivotData";
+import { GridExample } from "./components/GridExample";
 import { useData } from "./hooks/useData";
-import { Grid } from "./components/Grid";
 import "./App.css";
+
+const wrapBreakpoint = "lg";
+
+// ! create pivot table
+// ! handle rate datasets
 
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
@@ -25,50 +26,71 @@ export const Dashboard = () => {
 
   const data = useData(`data/${checkedDataset}.json`);
 
-  const currentDataset = datasetOptions.find(
+  const pivotColumn = datasetOptions.find(
     ({ value }) => value === checkedDataset
-  );
-
-  const pivotColumn = currentDataset.pivotColumn;
-
-  const dataContainsRates = currentDataset.containsRates;
+  ).pivotColumn;
 
   const {
     summaryColumnOptions,
-    setOfSummaryColumns,
     measureOptions,
-    allColumnDefs,
+    // summaryColumns,
+    // pivotValues,
   } = useMemo(
     () =>
       !isLengthyArray(data) ? {} : deriveValuesFromData(data, pivotColumn),
     [data, pivotColumn]
   );
 
-  const pivotColumnDefs = useMemo(
-    () =>
-      getPivotColumnDefs({
-        checkedSummaryColumns,
-        setOfSummaryColumns,
-        dataContainsRates,
-        checkedMeasure,
-        allColumnDefs,
-      }),
-    [
-      allColumnDefs,
-      checkedMeasure,
-      dataContainsRates,
-      setOfSummaryColumns,
-      checkedSummaryColumns,
-    ]
-  );
+  const pivotedData = useMemo(() => {
+    console.log(data);
 
-  const pivotedData = useMemo(
-    () =>
-      pivotData({ checkedSummaryColumns, measureOptions, pivotColumn, data }),
-    [data, pivotColumn, measureOptions, checkedSummaryColumns]
-  );
+    const magicArray = [];
 
-  console.log(pivotedData);
+    const tree = {};
+
+    const checkedSumColsArr = [...checkedSummaryColumns];
+
+    data?.forEach((row) => {
+      let currentRoot = tree;
+
+      const pivotValue = row[pivotColumn];
+
+      const entries = [];
+
+      checkedSumColsArr.forEach((column, index) => {
+        const isLastIndex = index === checkedSumColsArr.length - 1;
+
+        const colValue = row[column];
+
+        entries.push([column, colValue]);
+
+        if (!(colValue in currentRoot))
+          currentRoot[colValue] = isLastIndex
+            ? Object.fromEntries(entries)
+            : {};
+
+        currentRoot = currentRoot[colValue];
+
+        magicArray.push({ reference: currentRoot });
+
+        if (isLastIndex) {
+          if (!(pivotValue in currentRoot)) currentRoot[pivotValue] = {};
+
+          currentRoot = currentRoot[pivotValue];
+
+          measureOptions.forEach(({ value: measure }) => {
+            const numericValue = row[measure];
+
+            if (!(measure in currentRoot)) currentRoot[measure] = 0;
+
+            currentRoot[measure] += numericValue;
+          });
+        }
+      });
+    });
+
+    console.log(tree);
+  }, [data, pivotColumn, measureOptions, checkedSummaryColumns]);
 
   useEffect(() => {
     const resetRadioState = (arr) =>
@@ -128,16 +150,7 @@ export const Dashboard = () => {
             ></CheckboxListGroup>
           </div>
         </div>
-        <div className="rounded shadow-sm p-3 w-100 d-flex flex-column gap-2">
-          <div className="lh-1">Pivot Table:</div>
-          <div className="ag-theme-quartz" style={{ height: 500 }}>
-            <Grid
-              defaultColDef={defaultColDef}
-              columnDefs={pivotColumnDefs}
-              rowData={pivotedData}
-            ></Grid>
-          </div>
-        </div>
+        <GridExample></GridExample>
       </div>
     </>
   );

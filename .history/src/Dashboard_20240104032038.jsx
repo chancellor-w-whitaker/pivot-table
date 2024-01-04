@@ -1,17 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
 
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
-import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
-import { wrapBreakpoint } from "./constants/wrapBreakpoint";
-import { defaultColDef } from "./constants/defaultColDef";
-import { pivotData } from "./functions/pivotData";
+import { GridExample } from "./components/GridExample";
 import { useData } from "./hooks/useData";
-import { Grid } from "./components/Grid";
 import "./App.css";
+
+const wrapBreakpoint = "lg";
+
+// ! create pivot table
+// ! handle rate datasets
 
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
@@ -128,15 +129,11 @@ export const Dashboard = () => {
             ></CheckboxListGroup>
           </div>
         </div>
-        <div className="rounded shadow-sm p-3 w-100 d-flex flex-column gap-2">
-          <div className="lh-1">Pivot Table:</div>
-          <div className="ag-theme-quartz" style={{ height: 500 }}>
-            <Grid
-              defaultColDef={defaultColDef}
-              columnDefs={pivotColumnDefs}
-              rowData={pivotedData}
-            ></Grid>
-          </div>
+        <div className="ag-theme-quartz w-100" style={{ minHeight: 500 }}>
+          <GridExample
+            columnDefs={pivotColumnDefs}
+            rowData={pivotedData}
+          ></GridExample>
         </div>
       </div>
     </>

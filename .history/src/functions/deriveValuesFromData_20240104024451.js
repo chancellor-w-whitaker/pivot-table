@@ -73,8 +73,9 @@ export const deriveValuesFromData = (data, pivotColumn) => {
 
   return {
     summaryColumnOptions,
-    setOfSummaryColumns,
+    setOfPivotValues,
     measureOptions,
     allColumnDefs,
+    s,
   };
 };

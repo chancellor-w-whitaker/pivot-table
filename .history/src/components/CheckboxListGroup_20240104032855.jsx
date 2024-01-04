@@ -2,10 +2,20 @@ import { startTransition, memo } from "react";
 
 import { isLengthyString } from "../functions/isLengthyString";
 
-export const RadioListGroup = memo(
-  ({ setCheckedValue, checkedValue, className, options, name }) => {
+export const CheckboxListGroup = memo(
+  ({ setCheckedValues, checkedValues, className, options }) => {
     const onOptionChange = (e) =>
-      startTransition(() => setCheckedValue(e.target.value));
+      startTransition(() =>
+        setCheckedValues((priorSet) => {
+          const nextSet = new Set(priorSet);
+
+          const value = e.target.value;
+
+          priorSet.has(value) ? nextSet.delete(value) : nextSet.add(value);
+
+          return nextSet;
+        })
+      );
 
     const defaultClassName = "list-group";
 
@@ -20,11 +30,10 @@ export const RadioListGroup = memo(
             <label className="list-group-item d-flex gap-2" key={value}>
               <input
                 className="form-check-input flex-shrink-0"
-                checked={value === checkedValue}
+                checked={checkedValues.has(value)}
                 onChange={onOptionChange}
+                type="checkbox"
                 value={value}
-                type="radio"
-                name={name}
               />
               <span>{label}</span>
             </label>
@@ -34,5 +43,3 @@ export const RadioListGroup = memo(
     );
   }
 );
-
-RadioListGroup.displayName = "RadioListGroup";

@@ -19,26 +19,19 @@ export const datasetOptions = [
   },
   {
     label: "Degrees Awarded",
-    containsRates: false,
     pivotColumn: "year",
+    containsRates: false,
     value: "degrees",
   },
   {
     pivotColumn: "retention_year",
     label: "Retention Rates",
-    containsRates: true,
     value: "retention",
   },
   {
     pivotColumn: "cohort_term",
     label: "Graduation Rates",
     value: "graduation",
-    containsRates: true,
   },
-  {
-    label: "Credit Hours",
-    containsRates: false,
-    pivotColumn: "year",
-    value: "hours",
-  },
+  { label: "Credit Hours", pivotColumn: "year", value: "hours" },
 ];

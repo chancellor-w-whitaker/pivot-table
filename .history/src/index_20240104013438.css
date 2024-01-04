@@ -298,6 +298,5 @@ body {
 }
 
 .ag-font-size {
-  /* font-size: var(--ag-font-size); */
-  font-size: 14px;
+  font-size: var(--ag-font-size);
 }

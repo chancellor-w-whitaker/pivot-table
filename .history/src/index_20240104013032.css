@@ -297,7 +297,6 @@ body {
   box-shadow: var(--bs-box-shadow-sm);
 }
 
-.ag-font-size {
-  /* font-size: var(--ag-font-size); */
-  font-size: 14px;
+.fs-7 {
+  font-size: 0.75rem !important;
 }

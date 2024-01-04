@@ -52,8 +52,6 @@ export const deriveValuesFromData = (data, pivotColumn) => {
 
   const summaryColumns = typedColumns.filter(({ type }) => type === "string");
 
-  const setOfSummaryColumns = new Set(summaryColumns.map(({ field }) => field));
-
   const getListGroupOptions = (arr) =>
     arr.map(({ field }) => ({
       label: toTitleCase(field),
@@ -66,15 +64,14 @@ export const deriveValuesFromData = (data, pivotColumn) => {
 
   const pivotValues = [...setOfPivotValues];
 
-  const allColumnDefs = [
+  const columnDefs = [
     ...summaryColumns.map(({ field }) => ({ field })),
     ...pivotValues.map((field) => ({ field })),
   ];
 
   return {
     summaryColumnOptions,
-    setOfSummaryColumns,
     measureOptions,
-    allColumnDefs,
+    columnDefs,
   };
 };

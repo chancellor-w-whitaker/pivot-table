@@ -1,17 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
 
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
-import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
-import { wrapBreakpoint } from "./constants/wrapBreakpoint";
-import { defaultColDef } from "./constants/defaultColDef";
-import { pivotData } from "./functions/pivotData";
+import { GridExample } from "./components/GridExample";
 import { useData } from "./hooks/useData";
-import { Grid } from "./components/Grid";
 import "./App.css";
+
+const wrapBreakpoint = "lg";
+
+// ! create pivot table
+// ! handle rate datasets
 
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
@@ -25,64 +26,42 @@ export const Dashboard = () => {
 
   const data = useData(`data/${checkedDataset}.json`);
 
-  const currentDataset = datasetOptions.find(
+  const pivotColumn = datasetOptions.find(
     ({ value }) => value === checkedDataset
-  );
-
-  const pivotColumn = currentDataset.pivotColumn;
-
-  const dataContainsRates = currentDataset.containsRates;
+  ).pivotColumn;
 
   const {
-    summaryColumnOptions,
-    setOfSummaryColumns,
-    measureOptions,
-    allColumnDefs,
+    summaryColumnsCheckboxOptions,
+    measureRadioOptions,
+    measureColumns,
+    // summaryColumns,
+    // pivotValues,
   } = useMemo(
     () =>
       !isLengthyArray(data) ? {} : deriveValuesFromData(data, pivotColumn),
     [data, pivotColumn]
   );
 
-  const pivotColumnDefs = useMemo(
-    () =>
-      getPivotColumnDefs({
-        checkedSummaryColumns,
-        setOfSummaryColumns,
-        dataContainsRates,
-        checkedMeasure,
-        allColumnDefs,
-      }),
-    [
-      allColumnDefs,
-      checkedMeasure,
-      dataContainsRates,
-      setOfSummaryColumns,
-      checkedSummaryColumns,
-    ]
-  );
-
-  const pivotedData = useMemo(
-    () =>
-      pivotData({ checkedSummaryColumns, measureOptions, pivotColumn, data }),
-    [data, pivotColumn, measureOptions, checkedSummaryColumns]
-  );
-
-  console.log(pivotedData);
+  const pivotedData = useMemo(() => {}, [
+    pivotColumn,
+    data,
+    measureColumns,
+    checkedSummaryColumns,
+  ]);
 
   useEffect(() => {
     const resetRadioState = (arr) =>
       isLengthyArray(arr) && setCheckedMeasure(arr[0].value);
 
-    resetRadioState(measureOptions);
-  }, [measureOptions]);
+    resetRadioState(measureRadioOptions);
+  }, [measureRadioOptions]);
 
   useEffect(() => {
     const resetCheckboxState = (arr) =>
       isLengthyArray(arr) && setCheckedSummaryColumns(new Set([arr[0].value]));
 
-    resetCheckboxState(summaryColumnOptions);
-  }, [summaryColumnOptions]);
+    resetCheckboxState(summaryColumnsCheckboxOptions);
+  }, [summaryColumnsCheckboxOptions]);
 
   return (
     <>
@@ -105,39 +84,30 @@ export const Dashboard = () => {
             ></RadioListGroup>
           </div>
           <div className="d-flex flex-column gap-2">
-            {isLengthyArray(measureOptions) && (
+            {isLengthyArray(measureRadioOptions) && (
               <div className="lh-1">Measure:</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedMeasure}
               className="shadow-sm text-nowrap"
+              options={measureRadioOptions}
               checkedValue={checkedMeasure}
-              options={measureOptions}
               name="measure"
             ></RadioListGroup>
           </div>
           <div className="d-flex flex-column gap-2">
-            {isLengthyArray(summaryColumnOptions) && (
+            {isLengthyArray(summaryColumnsCheckboxOptions) && (
               <div className="lh-1">Summary Columns:</div>
             )}
             <CheckboxListGroup
               setCheckedValues={setCheckedSummaryColumns}
+              options={summaryColumnsCheckboxOptions}
               checkedValues={checkedSummaryColumns}
               className="shadow-sm text-nowrap"
-              options={summaryColumnOptions}
             ></CheckboxListGroup>
           </div>
         </div>
-        <div className="rounded shadow-sm p-3 w-100 d-flex flex-column gap-2">
-          <div className="lh-1">Pivot Table:</div>
-          <div className="ag-theme-quartz" style={{ height: 500 }}>
-            <Grid
-              defaultColDef={defaultColDef}
-              columnDefs={pivotColumnDefs}
-              rowData={pivotedData}
-            ></Grid>
-          </div>
-        </div>
+        <GridExample></GridExample>
       </div>
     </>
   );

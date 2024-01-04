@@ -34,5 +34,3 @@ export const RadioListGroup = memo(
     );
   }
 );
-
-RadioListGroup.displayName = "RadioListGroup";

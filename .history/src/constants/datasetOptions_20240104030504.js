@@ -33,7 +33,6 @@ export const datasetOptions = [
     pivotColumn: "cohort_term",
     label: "Graduation Rates",
     value: "graduation",
-    containsRates: true,
   },
   {
     label: "Credit Hours",

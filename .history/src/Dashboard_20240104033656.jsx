@@ -7,11 +7,13 @@ import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
 import { wrapBreakpoint } from "./constants/wrapBreakpoint";
-import { defaultColDef } from "./constants/defaultColDef";
 import { pivotData } from "./functions/pivotData";
 import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
+
+// ! create pivot table
+// ! handle rate datasets
 
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
@@ -132,7 +134,7 @@ export const Dashboard = () => {
           <div className="lh-1">Pivot Table:</div>
           <div className="ag-theme-quartz" style={{ height: 500 }}>
             <Grid
-              defaultColDef={defaultColDef}
+              defaultColDef={{ headerValueGetter: (e) => console.log(e) }}
               columnDefs={pivotColumnDefs}
               rowData={pivotedData}
             ></Grid>

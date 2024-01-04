@@ -8,10 +8,14 @@ import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
 import { wrapBreakpoint } from "./constants/wrapBreakpoint";
 import { defaultColDef } from "./constants/defaultColDef";
+import { toTitleCase } from "./functions/toTitleCase";
 import { pivotData } from "./functions/pivotData";
 import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
+
+// ! create pivot table
+// ! handle rate datasets
 
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
