@@ -1,0 +1,9 @@
+export const numericColumnValueFormatter = (
+  { value },
+  measure,
+  doesDataContainRates
+) =>
+  (doesDataContainRates
+    ? value?.[measure] / value?.total
+    : Math.round(value?.[measure])
+  ).toLocaleString();

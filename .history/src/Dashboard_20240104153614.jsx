@@ -15,7 +15,6 @@ import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
 
-// ! chart should not disappear whenever there are no summary columns active (need to edit pivotData function)
 // ! download button?
 // ! chart resize bug
 // ! summary columns are not ordered
@@ -101,6 +100,8 @@ export const Dashboard = () => {
 
     resetCheckboxState(summaryColumnOptions);
   }, [summaryColumnOptions]);
+
+  console.log(pivotedData);
 
   return (
     <>

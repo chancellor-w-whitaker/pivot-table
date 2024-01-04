@@ -3,7 +3,6 @@ import { useLayoutEffect, useState, useMemo } from "react";
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
 import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
-import { getChartOptions } from "./functions/getChartOptions";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
@@ -15,7 +14,6 @@ import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
 
-// ! chart should not disappear whenever there are no summary columns active (need to edit pivotData function)
 // ! download button?
 // ! chart resize bug
 // ! summary columns are not ordered
@@ -78,14 +76,18 @@ export const Dashboard = () => {
   );
 
   const chartOptions = useMemo(
-    () =>
-      getChartOptions({
-        dataContainsRates,
-        checkedMeasure,
-        pivotColumn,
-        chartData,
-      }),
-    [chartData, checkedMeasure, pivotColumn, dataContainsRates]
+    () => ({
+      // Data: Data to be displayed in the chart
+      data: chartData.map((obj) => ({
+        [checkedMeasure]: obj.measures[checkedMeasure],
+        [pivotColumn]: obj[pivotColumn],
+      })),
+      // Series: Defines which chart type and data to use
+      series: [{ yKey: checkedMeasure, xKey: pivotColumn, type: "bar" }],
+      // container: <div className="rounded shadow-sm overflow-hidden w-100"></div>,
+      // width: "100%",
+    }),
+    [chartData, checkedMeasure, pivotColumn]
   );
 
   useLayoutEffect(() => {
@@ -102,6 +104,8 @@ export const Dashboard = () => {
     resetCheckboxState(summaryColumnOptions);
   }, [summaryColumnOptions]);
 
+  console.log(pivotedData);
+
   return (
     <>
       <div
@@ -112,7 +116,7 @@ export const Dashboard = () => {
         >
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(datasetOptions) && (
-              <div className="lh-1 fs-5">Dataset:</div>
+              <div className="lh-1">Dataset:</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedDataset}
@@ -124,7 +128,7 @@ export const Dashboard = () => {
           </div>
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(measureOptions) && (
-              <div className="lh-1 fs-5">Measure:</div>
+              <div className="lh-1">Measure:</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedMeasure}
@@ -136,7 +140,7 @@ export const Dashboard = () => {
           </div>
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(summaryColumnOptions) && (
-              <div className="lh-1 fs-5">Summary Columns:</div>
+              <div className="lh-1">Summary Columns:</div>
             )}
             <CheckboxListGroup
               setCheckedValues={setCheckedSummaryColumns}
@@ -148,19 +152,19 @@ export const Dashboard = () => {
         </div>
         <div className="d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">
           <div className="d-flex flex-column gap-2">
-            <div className="lh-1 fs-5">Bar Chart:</div>
-            <div className="rounded shadow-sm overflow-hidden w-100">
-              <Chart options={chartOptions}></Chart>
-            </div>
-          </div>
-          <div className="d-flex flex-column gap-2">
-            <div className="lh-1 fs-5">Pivot Table:</div>
+            <div className="lh-1">Pivot Table:</div>
             <div className="ag-theme-quartz" style={{ height: 500 }}>
               <Grid
                 defaultColDef={defaultColDef}
                 columnDefs={pivotColumnDefs}
                 rowData={pivotedData}
               ></Grid>
+            </div>
+          </div>
+          <div className="d-flex flex-column gap-2">
+            <div className="lh-1">Bar Chart:</div>
+            <div className="rounded shadow-sm overflow-hidden w-100">
+              <Chart options={chartOptions}></Chart>
             </div>
           </div>
         </div>

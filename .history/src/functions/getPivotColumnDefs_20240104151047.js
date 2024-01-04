@@ -1,3 +1,5 @@
+import { numColValueFormatter } from "./numColValueFormatter";
+
 export const getPivotColumnDefs = ({
   checkedSummaryColumns,
   setOfSummaryColumns,
@@ -16,15 +18,11 @@ export const getPivotColumnDefs = ({
         : {
             ...object,
             valueFormatter: ({ value }) =>
-              dataContainsRates
-                ? (value?.[checkedMeasure] / value?.total).toLocaleString(
-                    "en",
-                    {
-                      style: "percent",
-                    }
-                  )
-                : Math.round(value?.[checkedMeasure]).toLocaleString(),
-
+              numColValueFormatter({
+                measureValue: value?.[checkedMeasure],
+                ratesBoolean: dataContainsRates,
+                totalValue: value?.total,
+              }),
             type: "numericColumn",
           }
     );

@@ -55,25 +55,13 @@ export const pivotData = ({
 
   const node = {};
 
-  const chartData = [];
-
   magicArray.forEach((row) => {
-    Object.entries(row).forEach(([key, objectOrString]) => {
-      if (typeof objectOrString === "object") {
-        if (!(key in node)) {
-          node[key] = { ...objectOrString, [pivotColumn]: key };
-
-          chartData.push(node[key]);
-        } else {
-          Object.entries(objectOrString).forEach(([meas, measValue]) => {
-            if (typeof measValue === "number") node[key][meas] += measValue;
-          });
-        }
+    Object.entries(row).forEach(([key, objOrStr]) => {
+      if (typeof objOrStr === "object") {
+        if (!(key in node)) node[key] = { ...objOrStr };
       }
     });
   });
 
-  console.log(chartData);
-
-  return { pivotedData: magicArray, chartData };
+  return magicArray;
 };

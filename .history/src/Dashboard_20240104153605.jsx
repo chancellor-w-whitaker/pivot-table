@@ -3,7 +3,6 @@ import { useLayoutEffect, useState, useMemo } from "react";
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
 import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
-import { getChartOptions } from "./functions/getChartOptions";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
@@ -15,7 +14,6 @@ import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
 
-// ! chart should not disappear whenever there are no summary columns active (need to edit pivotData function)
 // ! download button?
 // ! chart resize bug
 // ! summary columns are not ordered
@@ -101,6 +99,8 @@ export const Dashboard = () => {
 
     resetCheckboxState(summaryColumnOptions);
   }, [summaryColumnOptions]);
+
+  console.log(pivotedData);
 
   return (
     <>

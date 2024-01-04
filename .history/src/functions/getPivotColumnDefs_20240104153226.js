@@ -17,12 +17,7 @@ export const getPivotColumnDefs = ({
             ...object,
             valueFormatter: ({ value }) =>
               dataContainsRates
-                ? (value?.[checkedMeasure] / value?.total).toLocaleString(
-                    "en",
-                    {
-                      style: "percent",
-                    }
-                  )
+                ? (value?.[checkedMeasure] / value?.total).toLocaleString()
                 : Math.round(value?.[checkedMeasure]).toLocaleString(),
 
             type: "numericColumn",

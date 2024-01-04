@@ -55,15 +55,13 @@ export const pivotData = ({
 
   const node = {};
 
-  const chartData = [];
+  console.log(node);
 
   magicArray.forEach((row) => {
     Object.entries(row).forEach(([key, objectOrString]) => {
       if (typeof objectOrString === "object") {
         if (!(key in node)) {
-          node[key] = { ...objectOrString, [pivotColumn]: key };
-
-          chartData.push(node[key]);
+          node[key] = { ...objectOrString };
         } else {
           Object.entries(objectOrString).forEach(([meas, measValue]) => {
             if (typeof measValue === "number") node[key][meas] += measValue;
@@ -72,6 +70,13 @@ export const pivotData = ({
       }
     });
   });
+
+  console.log(node);
+
+  const chartData = Object.entries(node).map(([pivValue, measObject]) => ({
+    [pivotColumn]: pivValue,
+    measures: measObject,
+  }));
 
   console.log(chartData);
 

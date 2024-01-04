@@ -1,9 +1,9 @@
 import { useLayoutEffect, useState, useMemo } from "react";
 
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
+import { numColValueFormatter } from "./functions/numColValueFormatter";
 import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
-import { getChartOptions } from "./functions/getChartOptions";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
@@ -15,7 +15,6 @@ import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
 
-// ! chart should not disappear whenever there are no summary columns active (need to edit pivotData function)
 // ! download button?
 // ! chart resize bug
 // ! summary columns are not ordered
@@ -78,13 +77,33 @@ export const Dashboard = () => {
   );
 
   const chartOptions = useMemo(
-    () =>
-      getChartOptions({
-        dataContainsRates,
-        checkedMeasure,
-        pivotColumn,
-        chartData,
-      }),
+    () => ({
+      // Series: Defines which chart type and data to use
+      series: [
+        {
+          label: {
+            formatter: ({ value }) =>
+              numColValueFormatter({
+                ratesBoolean: dataContainsRates,
+                measure: checkedMeasure,
+                value,
+              }),
+          },
+          yKey: checkedMeasure,
+          xKey: pivotColumn,
+          type: "bar",
+        },
+      ],
+      // Data: Data to be displayed in the chart
+      data: !dataContainsRates
+        ? chartData
+        : chartData.map((row) => ({
+            ...row,
+            [checkedMeasure]: row[checkedMeasure] / row.total,
+          })),
+      // container: <div className="rounded shadow-sm overflow-hidden w-100"></div>,
+      // width: "100%",
+    }),
     [chartData, checkedMeasure, pivotColumn, dataContainsRates]
   );
 
@@ -101,6 +120,8 @@ export const Dashboard = () => {
 
     resetCheckboxState(summaryColumnOptions);
   }, [summaryColumnOptions]);
+
+  console.log(pivotedData);
 
   return (
     <>

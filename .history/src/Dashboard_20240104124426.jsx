@@ -3,22 +3,16 @@ import { useLayoutEffect, useState, useMemo } from "react";
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
 import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
-import { getChartOptions } from "./functions/getChartOptions";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
 import { wrapBreakpoint } from "./constants/wrapBreakpoint";
 import { defaultColDef } from "./constants/defaultColDef";
 import { pivotData } from "./functions/pivotData";
-import { Chart } from "./components/Chart";
 import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
 
-// ! chart should not disappear whenever there are no summary columns active (need to edit pivotData function)
-// ! download button?
-// ! chart resize bug
-// ! summary columns are not ordered
 // ! got rid of ag grid console error by changing effects to layout effects, but still have weird grid data flash occur. this might be an example of why you should fetch data & reset states in one event handler instead of in many effects
 // ! both use effects could be removed by calculating reset values when fetching data. this means setData would need to be handled in an event handler. furthermore, all data derived values could be calculated when gathering data. however, then you would need one use effect to programmatically click the initial dataset button on app start
 // ! don't forget about ag grid console error (probably has to do with weird grid flash and may come from your using startTransition)
@@ -71,21 +65,10 @@ export const Dashboard = () => {
     ]
   );
 
-  const { pivotedData, chartData } = useMemo(
+  const pivotedData = useMemo(
     () =>
       pivotData({ checkedSummaryColumns, measureOptions, pivotColumn, data }),
     [data, pivotColumn, measureOptions, checkedSummaryColumns]
-  );
-
-  const chartOptions = useMemo(
-    () =>
-      getChartOptions({
-        dataContainsRates,
-        checkedMeasure,
-        pivotColumn,
-        chartData,
-      }),
-    [chartData, checkedMeasure, pivotColumn, dataContainsRates]
   );
 
   useLayoutEffect(() => {
@@ -105,14 +88,14 @@ export const Dashboard = () => {
   return (
     <>
       <div
-        className={`d-flex gap-3 flex-wrap-reverse flex-${wrapBreakpoint}-nowrap`}
+        className={`d-flex flex-wrap-reverse flex-${wrapBreakpoint}-nowrap gap-3`}
       >
         <div
-          className={`d-flex gap-3 p-3 rounded shadow-sm flex-row flex-${wrapBreakpoint}-column flex-wrap flex-fill`}
+          className={`d-flex gap-3 flex-row flex-wrap flex-${wrapBreakpoint}-column p-3 rounded shadow-sm flex-fill`}
         >
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(datasetOptions) && (
-              <div className="lh-1 fs-5">Dataset:</div>
+              <div className="lh-1">Dataset:</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedDataset}
@@ -124,7 +107,7 @@ export const Dashboard = () => {
           </div>
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(measureOptions) && (
-              <div className="lh-1 fs-5">Measure:</div>
+              <div className="lh-1">Measure:</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedMeasure}
@@ -136,7 +119,7 @@ export const Dashboard = () => {
           </div>
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(summaryColumnOptions) && (
-              <div className="lh-1 fs-5">Summary Columns:</div>
+              <div className="lh-1">Summary Columns:</div>
             )}
             <CheckboxListGroup
               setCheckedValues={setCheckedSummaryColumns}
@@ -146,22 +129,14 @@ export const Dashboard = () => {
             ></CheckboxListGroup>
           </div>
         </div>
-        <div className="d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">
-          <div className="d-flex flex-column gap-2">
-            <div className="lh-1 fs-5">Bar Chart:</div>
-            <div className="rounded shadow-sm overflow-hidden w-100">
-              <Chart options={chartOptions}></Chart>
-            </div>
-          </div>
-          <div className="d-flex flex-column gap-2">
-            <div className="lh-1 fs-5">Pivot Table:</div>
-            <div className="ag-theme-quartz" style={{ height: 500 }}>
-              <Grid
-                defaultColDef={defaultColDef}
-                columnDefs={pivotColumnDefs}
-                rowData={pivotedData}
-              ></Grid>
-            </div>
+        <div className="rounded shadow-sm p-3 w-100 d-flex flex-column gap-2">
+          <div className="lh-1">Pivot Table:</div>
+          <div className="ag-theme-quartz" style={{ height: 500 }}>
+            <Grid
+              defaultColDef={defaultColDef}
+              columnDefs={pivotColumnDefs}
+              rowData={pivotedData}
+            ></Grid>
           </div>
         </div>
       </div>
