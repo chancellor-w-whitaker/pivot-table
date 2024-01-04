@@ -1,0 +1,48 @@
+export const CheckboxListGroup = () => {
+  return (
+    <>
+      <div className="list-group">
+        <label className="list-group-item d-flex gap-2">
+          <input
+            className="form-check-input flex-shrink-0"
+            defaultChecked=""
+            type="checkbox"
+            defaultValue=""
+          />
+          <span>
+            First checkbox
+            <small className="d-block text-body-secondary">
+              With support text underneath to add more detail
+            </small>
+          </span>
+        </label>
+        <label className="list-group-item d-flex gap-2">
+          <input
+            className="form-check-input flex-shrink-0"
+            type="checkbox"
+            defaultValue=""
+          />
+          <span>
+            Second checkbox
+            <small className="d-block text-body-secondary">
+              Some other text goes here
+            </small>
+          </span>
+        </label>
+        <label className="list-group-item d-flex gap-2">
+          <input
+            className="form-check-input flex-shrink-0"
+            type="checkbox"
+            defaultValue=""
+          />
+          <span>
+            Third checkbox
+            <small className="d-block text-body-secondary">
+              And we end with another snippet of text
+            </small>
+          </span>
+        </label>
+      </div>
+    </>
+  );
+};

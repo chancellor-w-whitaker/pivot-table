@@ -1,0 +1,5 @@
+:root,
+[data-bs-theme="light"] {
+  --bs-box-shadow: var(--bs-box-shadow);
+  --bs-box-shadow-sm: var(--bs-box-shadow);
+}
