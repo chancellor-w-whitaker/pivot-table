@@ -69,6 +69,8 @@ export const Dashboard = () => {
     [data, pivotColumn, measureOptions, checkedSummaryColumns]
   );
 
+  console.log(pivotedData);
+
   useEffect(() => {
     const resetRadioState = (arr) =>
       isLengthyArray(arr) && setCheckedMeasure(arr[0].value);
