@@ -13,7 +13,7 @@ import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
 
-// ! both use effects could be removed by calculating reset values when fetching data. this means setData would need to be handled in an event handler. furthermore, all data derived values could be calculated when gathering data. however, then you would need one use effect to programmatically click the initial dataset button on app start
+// ! both use effects could be removed by calculating reset values when fetching data. this means setData would need to be handled in an event handler. furthermore, all data derived values could be calculated when gathering data. however, then you would need one use effect to programmatically click the initial dataset button on app start.
 // ! don't forget about ag grid console error (probably has to do with weird grid flash and may come from your using startTransition)
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
