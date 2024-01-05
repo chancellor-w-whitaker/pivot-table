@@ -87,9 +87,6 @@ export const getChartOptions = ({
             return { content: formatNumber(datum[yKey]), title: datum[xKey] };
           },
         },
-        label: {
-          formatter: ({ value }) => formatNumber(value),
-        },
         yKey: "regression value",
         xKey: pivotColumn,
         type: "line",

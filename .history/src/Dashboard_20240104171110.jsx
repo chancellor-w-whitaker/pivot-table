@@ -17,6 +17,7 @@ import "./App.css";
 
 /*
 ! notepad
+
 table
 * one measure (make selectable, similar to tabs)
 * columns would be different term desc options
@@ -57,17 +58,7 @@ chart
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
 
-const regressionOptions = [
-  { value: "linear", label: "Linear" },
-  { value: "exponential", label: "Exponential" },
-  { value: "logarithmic", label: "Logarithmic" },
-  { value: "power", label: "Power" },
-  { value: "polynomial", label: "Polynomial" },
-];
-
 export const Dashboard = () => {
-  const [checkedRegression, setCheckedRegression] = useState("linear");
-
   const [checkedDataset, setCheckedDataset] = useState(datasetOptions[0].value);
 
   const [checkedMeasure, setCheckedMeasure] = useState("");
@@ -83,8 +74,6 @@ export const Dashboard = () => {
   const pivotColumn = currentDataset.pivotColumn;
 
   const dataContainsRates = currentDataset.containsRates;
-
-  const datasetTitle = currentDataset.label;
 
   const {
     summaryColumnOptions,
@@ -125,20 +114,11 @@ export const Dashboard = () => {
     () =>
       getChartOptions({
         dataContainsRates,
-        checkedRegression,
         checkedMeasure,
-        datasetTitle,
         pivotColumn,
         chartData,
       }),
-    [
-      chartData,
-      checkedMeasure,
-      pivotColumn,
-      dataContainsRates,
-      datasetTitle,
-      checkedRegression,
-    ]
+    [chartData, checkedMeasure, pivotColumn, dataContainsRates]
   );
 
   useLayoutEffect(() => {
@@ -161,7 +141,7 @@ export const Dashboard = () => {
         className={`d-flex gap-3 flex-wrap-reverse flex-${wrapBreakpoint}-nowrap`}
       >
         <div
-          className={`bg-warning-subtle d-flex gap-3 p-3 rounded shadow-sm flex-row flex-${wrapBreakpoint}-column flex-wrap flex-fill`}
+          className={`text-bg-secondary d-flex gap-3 p-3 rounded shadow-sm flex-row flex-${wrapBreakpoint}-column flex-wrap flex-fill`}
         >
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(datasetOptions) && (
@@ -188,18 +168,6 @@ export const Dashboard = () => {
             ></RadioListGroup>
           </div>
           <div className="d-flex flex-column gap-2">
-            {isLengthyArray(regressionOptions) && (
-              <div className="lh-1 fs-5">Regression</div>
-            )}
-            <RadioListGroup
-              setCheckedValue={setCheckedRegression}
-              className="shadow-sm text-nowrap"
-              checkedValue={checkedRegression}
-              options={regressionOptions}
-              name="regression"
-            ></RadioListGroup>
-          </div>
-          <div className="d-flex flex-column gap-2">
             {isLengthyArray(summaryColumnOptions) && (
               <div className="lh-1 fs-5">Summary Columns</div>
             )}
@@ -211,7 +179,7 @@ export const Dashboard = () => {
             ></CheckboxListGroup>
           </div>
         </div>
-        <div className="bg-success-subtle d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">
+        <div className="text-bg-secondary d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">
           <div className="d-flex flex-column gap-2">
             <div className="lh-1 fs-5">Bar Chart</div>
             <div className="rounded shadow-sm overflow-hidden w-100">

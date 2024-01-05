@@ -22,7 +22,6 @@ const getRegressionResult = (type, data) => {
       result = regression.polynomial(data);
       break;
   }
-
   return result;
 };
 
@@ -53,10 +52,9 @@ export const getChartOptions = ({
     obj[checkedMeasure],
   ]);
 
-  const regressionResult = getRegressionResult(
-    checkedRegression,
-    regressionData
-  );
+  const regressionResult = regression.linear(regressionData);
+
+  console.log(regressionResult);
 
   const finalData = dataOption.map((obj, index) => ({
     ...obj,
@@ -82,14 +80,6 @@ export const getChartOptions = ({
         type: "bar",
       },
       {
-        tooltip: {
-          renderer: ({ datum, xKey, yKey }) => {
-            return { content: formatNumber(datum[yKey]), title: datum[xKey] };
-          },
-        },
-        label: {
-          formatter: ({ value }) => formatNumber(value),
-        },
         yKey: "regression value",
         xKey: pivotColumn,
         type: "line",

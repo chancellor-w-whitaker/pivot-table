@@ -57,17 +57,7 @@ chart
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
 
-const regressionOptions = [
-  { value: "linear", label: "Linear" },
-  { value: "exponential", label: "Exponential" },
-  { value: "logarithmic", label: "Logarithmic" },
-  { value: "power", label: "Power" },
-  { value: "polynomial", label: "Polynomial" },
-];
-
 export const Dashboard = () => {
-  const [checkedRegression, setCheckedRegression] = useState("linear");
-
   const [checkedDataset, setCheckedDataset] = useState(datasetOptions[0].value);
 
   const [checkedMeasure, setCheckedMeasure] = useState("");
@@ -125,20 +115,12 @@ export const Dashboard = () => {
     () =>
       getChartOptions({
         dataContainsRates,
-        checkedRegression,
         checkedMeasure,
         datasetTitle,
         pivotColumn,
         chartData,
       }),
-    [
-      chartData,
-      checkedMeasure,
-      pivotColumn,
-      dataContainsRates,
-      datasetTitle,
-      checkedRegression,
-    ]
+    [chartData, checkedMeasure, pivotColumn, dataContainsRates, datasetTitle]
   );
 
   useLayoutEffect(() => {
@@ -185,18 +167,6 @@ export const Dashboard = () => {
               checkedValue={checkedMeasure}
               options={measureOptions}
               name="measure"
-            ></RadioListGroup>
-          </div>
-          <div className="d-flex flex-column gap-2">
-            {isLengthyArray(regressionOptions) && (
-              <div className="lh-1 fs-5">Regression</div>
-            )}
-            <RadioListGroup
-              setCheckedValue={setCheckedRegression}
-              className="shadow-sm text-nowrap"
-              checkedValue={checkedRegression}
-              options={regressionOptions}
-              name="regression"
             ></RadioListGroup>
           </div>
           <div className="d-flex flex-column gap-2">

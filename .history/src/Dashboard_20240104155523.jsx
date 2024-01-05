@@ -15,38 +15,6 @@ import { useData } from "./hooks/useData";
 import { Grid } from "./components/Grid";
 import "./App.css";
 
-/*
-! notepad
-table
-* one measure (make selectable, similar to tabs)
-* columns would be different term desc options
-* other columns are ones selected
-- rates: percent (num/den) (is there an intuitive way to present part of total/total for downloading purposes) (or could change just downloaded data)
-- if rate, handle differently
-
-axis
-- make y max be max of all values (including regression values)
-- make y min be min value with some calculation (maybe 90%)
-
-chart
-- change method of zooming in & out & rotating axis
-* default to value versus truncated
-* wrap text on axis ticks
-
-
-- two decimal place out on percentages
-- adding things to tooltip (find https://chamce-fb.web.app/) 
-- predicted (find https://chamce-fb.web.app/)
-- regression
-- formatting and scaling axes
-- NaN in grid
-- fix numbers sorting as strings
-- some kind of hover/click icon definition
-- autosizer
-- shrink text & shrink row size in grid
-- branding colors
-*/
-
 // ! chart should not disappear whenever there are no summary columns active (need to edit pivotData function)
 // ! download button?
 // ! chart resize bug
@@ -57,17 +25,7 @@ chart
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
 
-const regressionOptions = [
-  { value: "linear", label: "Linear" },
-  { value: "exponential", label: "Exponential" },
-  { value: "logarithmic", label: "Logarithmic" },
-  { value: "power", label: "Power" },
-  { value: "polynomial", label: "Polynomial" },
-];
-
 export const Dashboard = () => {
-  const [checkedRegression, setCheckedRegression] = useState("linear");
-
   const [checkedDataset, setCheckedDataset] = useState(datasetOptions[0].value);
 
   const [checkedMeasure, setCheckedMeasure] = useState("");
@@ -83,8 +41,6 @@ export const Dashboard = () => {
   const pivotColumn = currentDataset.pivotColumn;
 
   const dataContainsRates = currentDataset.containsRates;
-
-  const datasetTitle = currentDataset.label;
 
   const {
     summaryColumnOptions,
@@ -125,20 +81,11 @@ export const Dashboard = () => {
     () =>
       getChartOptions({
         dataContainsRates,
-        checkedRegression,
         checkedMeasure,
-        datasetTitle,
         pivotColumn,
         chartData,
       }),
-    [
-      chartData,
-      checkedMeasure,
-      pivotColumn,
-      dataContainsRates,
-      datasetTitle,
-      checkedRegression,
-    ]
+    [chartData, checkedMeasure, pivotColumn, dataContainsRates]
   );
 
   useLayoutEffect(() => {
@@ -161,11 +108,11 @@ export const Dashboard = () => {
         className={`d-flex gap-3 flex-wrap-reverse flex-${wrapBreakpoint}-nowrap`}
       >
         <div
-          className={`bg-warning-subtle d-flex gap-3 p-3 rounded shadow-sm flex-row flex-${wrapBreakpoint}-column flex-wrap flex-fill`}
+          className={`bg-dark-subtle d-flex gap-3 p-3 rounded shadow-sm flex-row flex-${wrapBreakpoint}-column flex-wrap flex-fill`}
         >
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(datasetOptions) && (
-              <div className="lh-1 fs-5">Dataset</div>
+              <div className="lh-1 fs-5">Dataset:</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedDataset}
@@ -177,7 +124,7 @@ export const Dashboard = () => {
           </div>
           <div className="d-flex flex-column gap-2">
             {isLengthyArray(measureOptions) && (
-              <div className="lh-1 fs-5">Measure</div>
+              <div className="lh-1 fs-5">Measure:</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedMeasure}
@@ -188,20 +135,8 @@ export const Dashboard = () => {
             ></RadioListGroup>
           </div>
           <div className="d-flex flex-column gap-2">
-            {isLengthyArray(regressionOptions) && (
-              <div className="lh-1 fs-5">Regression</div>
-            )}
-            <RadioListGroup
-              setCheckedValue={setCheckedRegression}
-              className="shadow-sm text-nowrap"
-              checkedValue={checkedRegression}
-              options={regressionOptions}
-              name="regression"
-            ></RadioListGroup>
-          </div>
-          <div className="d-flex flex-column gap-2">
             {isLengthyArray(summaryColumnOptions) && (
-              <div className="lh-1 fs-5">Summary Columns</div>
+              <div className="lh-1 fs-5">Summary Columns:</div>
             )}
             <CheckboxListGroup
               setCheckedValues={setCheckedSummaryColumns}
@@ -211,15 +146,15 @@ export const Dashboard = () => {
             ></CheckboxListGroup>
           </div>
         </div>
-        <div className="bg-success-subtle d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">
+        <div className="bg-dark-subtle d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">
           <div className="d-flex flex-column gap-2">
-            <div className="lh-1 fs-5">Bar Chart</div>
+            <div className="lh-1 fs-5">Bar Chart:</div>
             <div className="rounded shadow-sm overflow-hidden w-100">
               <Chart options={chartOptions}></Chart>
             </div>
           </div>
           <div className="d-flex flex-column gap-2">
-            <div className="lh-1 fs-5">Pivot Table</div>
+            <div className="lh-1 fs-5">Pivot Table:</div>
             <div className="ag-theme-quartz" style={{ height: 500 }}>
               <Grid
                 defaultColDef={defaultColDef}

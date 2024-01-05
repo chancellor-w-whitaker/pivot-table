@@ -125,20 +125,12 @@ export const Dashboard = () => {
     () =>
       getChartOptions({
         dataContainsRates,
-        checkedRegression,
         checkedMeasure,
         datasetTitle,
         pivotColumn,
         chartData,
       }),
-    [
-      chartData,
-      checkedMeasure,
-      pivotColumn,
-      dataContainsRates,
-      datasetTitle,
-      checkedRegression,
-    ]
+    [chartData, checkedMeasure, pivotColumn, dataContainsRates, datasetTitle]
   );
 
   useLayoutEffect(() => {

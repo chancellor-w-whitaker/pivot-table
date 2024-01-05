@@ -125,20 +125,12 @@ export const Dashboard = () => {
     () =>
       getChartOptions({
         dataContainsRates,
-        checkedRegression,
         checkedMeasure,
         datasetTitle,
         pivotColumn,
         chartData,
       }),
-    [
-      chartData,
-      checkedMeasure,
-      pivotColumn,
-      dataContainsRates,
-      datasetTitle,
-      checkedRegression,
-    ]
+    [chartData, checkedMeasure, pivotColumn, dataContainsRates, datasetTitle]
   );
 
   useLayoutEffect(() => {
@@ -188,14 +180,14 @@ export const Dashboard = () => {
             ></RadioListGroup>
           </div>
           <div className="d-flex flex-column gap-2">
-            {isLengthyArray(regressionOptions) && (
+            {isLengthyArray(measureOptions) && (
               <div className="lh-1 fs-5">Regression</div>
             )}
             <RadioListGroup
               setCheckedValue={setCheckedRegression}
               className="shadow-sm text-nowrap"
               checkedValue={checkedRegression}
-              options={regressionOptions}
+              options={measureOptions}
               name="regression"
             ></RadioListGroup>
           </div>

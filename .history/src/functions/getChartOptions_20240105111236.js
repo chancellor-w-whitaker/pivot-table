@@ -2,33 +2,8 @@ import regression from "regression";
 
 import { toTitleCase } from "./toTitleCase";
 
-const getRegressionResult = (type, data) => {
-  let result;
-
-  switch (type) {
-    case "linear":
-      result = regression.linear(data);
-      break;
-    case "exponential":
-      result = regression.exponential(data);
-      break;
-    case "logarithmic":
-      result = regression.logarithmic(data);
-      break;
-    case "power":
-      result = regression.power(data);
-      break;
-    case "polynomial":
-      result = regression.polynomial(data);
-      break;
-  }
-
-  return result;
-};
-
 export const getChartOptions = ({
   dataContainsRates,
-  checkedRegression,
   checkedMeasure,
   datasetTitle,
   pivotColumn,
@@ -53,14 +28,13 @@ export const getChartOptions = ({
     obj[checkedMeasure],
   ]);
 
-  const regressionResult = getRegressionResult(
-    checkedRegression,
-    regressionData
-  );
+  const regressionResult = regression.linear(regressionData);
+
+  console.log(regressionResult);
 
   const finalData = dataOption.map((obj, index) => ({
     ...obj,
-    "regression value": regressionResult.points[index][1],
+    regression_value: regressionResult.points[index][1],
   }));
 
   console.log(finalData);
@@ -82,15 +56,7 @@ export const getChartOptions = ({
         type: "bar",
       },
       {
-        tooltip: {
-          renderer: ({ datum, xKey, yKey }) => {
-            return { content: formatNumber(datum[yKey]), title: datum[xKey] };
-          },
-        },
-        label: {
-          formatter: ({ value }) => formatNumber(value),
-        },
-        yKey: "regression value",
+        yKey: "regression_value",
         xKey: pivotColumn,
         type: "line",
       },

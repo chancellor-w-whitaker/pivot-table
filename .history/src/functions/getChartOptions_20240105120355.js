@@ -10,20 +10,20 @@ const getRegressionResult = (type, data) => {
       result = regression.linear(data);
       break;
     case "exponential":
-      result = regression.exponential(data);
+      result = regression.linear(data);
       break;
     case "logarithmic":
-      result = regression.logarithmic(data);
+      result = regression.linear(data);
       break;
     case "power":
-      result = regression.power(data);
+      result = regression.linear(data);
       break;
     case "polynomial":
-      result = regression.polynomial(data);
+      result = regression.linear(data);
       break;
+    default:
+    // code block
   }
-
-  return result;
 };
 
 export const getChartOptions = ({
@@ -53,10 +53,9 @@ export const getChartOptions = ({
     obj[checkedMeasure],
   ]);
 
-  const regressionResult = getRegressionResult(
-    checkedRegression,
-    regressionData
-  );
+  const regressionResult = regression.linear(regressionData);
+
+  console.log(regressionResult);
 
   const finalData = dataOption.map((obj, index) => ({
     ...obj,
@@ -82,14 +81,6 @@ export const getChartOptions = ({
         type: "bar",
       },
       {
-        tooltip: {
-          renderer: ({ datum, xKey, yKey }) => {
-            return { content: formatNumber(datum[yKey]), title: datum[xKey] };
-          },
-        },
-        label: {
-          formatter: ({ value }) => formatNumber(value),
-        },
         yKey: "regression value",
         xKey: pivotColumn,
         type: "line",

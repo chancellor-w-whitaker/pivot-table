@@ -58,6 +58,8 @@ export const getChartOptions = ({
     regressionData
   );
 
+  console.log(regressionResult);
+
   const finalData = dataOption.map((obj, index) => ({
     ...obj,
     "regression value": regressionResult.points[index][1],
@@ -82,14 +84,6 @@ export const getChartOptions = ({
         type: "bar",
       },
       {
-        tooltip: {
-          renderer: ({ datum, xKey, yKey }) => {
-            return { content: formatNumber(datum[yKey]), title: datum[xKey] };
-          },
-        },
-        label: {
-          formatter: ({ value }) => formatNumber(value),
-        },
         yKey: "regression value",
         xKey: pivotColumn,
         type: "line",
