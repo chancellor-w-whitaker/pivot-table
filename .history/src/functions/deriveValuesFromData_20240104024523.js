@@ -1,12 +1,13 @@
 import { toTitleCase } from "./toTitleCase";
 
 export const deriveValuesFromData = (data, pivotColumn) => {
-  const iterateData = (data, validTypes = new Set(["number", "string"])) => {
+  const countTypesAndFindPivotValues = (
+    data,
+    validTypes = new Set(["number", "string"])
+  ) => {
     const colTypesObject = {};
 
     const pivotValues = new Set();
-
-    const filterSets = {};
 
     data.forEach((row) => {
       Object.keys(row).forEach((column) => {
@@ -23,22 +24,17 @@ export const deriveValuesFromData = (data, pivotColumn) => {
         colTypesObject[column][type] += 1;
 
         if (column === pivotColumn) pivotValues.add(value);
-
-        if (!(column in filterSets)) filterSets[column] = new Set();
-
-        filterSets[column].add(value);
       });
     });
 
     return {
       columnTypesCounted: colTypesObject,
       setOfPivotValues: pivotValues,
-      filterSets,
     };
   };
 
-  const { columnTypesCounted, setOfPivotValues, filterSets } =
-    iterateData(data);
+  const { columnTypesCounted, setOfPivotValues } =
+    countTypesAndFindPivotValues(data);
 
   const getMostFrequentType = (typesObject) =>
     Object.entries(typesObject).sort(
@@ -75,18 +71,10 @@ export const deriveValuesFromData = (data, pivotColumn) => {
     ...pivotValues.map((field) => ({ field })),
   ];
 
-  measureOptions.forEach(({ value }) => delete filterSets[value]);
-
-  const filterArrays = Object.fromEntries(
-    Object.entries(filterSets).map(([key, set]) => [key, [...set].sort()])
-  );
-
   return {
     summaryColumnOptions,
     setOfSummaryColumns,
     measureOptions,
     allColumnDefs,
-    filterArrays,
-    filterSets,
   };
 };

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useMemo, memo } from "react";
+import { useLayoutEffect, useState, useMemo } from "react";
 
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
 import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
@@ -10,7 +10,6 @@ import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
 import { wrapBreakpoint } from "./constants/wrapBreakpoint";
 import { defaultColDef } from "./constants/defaultColDef";
-import { toTitleCase } from "./functions/toTitleCase";
 import { pivotData } from "./functions/pivotData";
 import { Dropdown } from "./components/Dropdown";
 import { Chart } from "./components/Chart";
@@ -60,7 +59,7 @@ chart
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
 
-const CommonDropdownTrigger = memo(({ children }) => {
+const CommonDropdownTrigger = ({ children }) => {
   return (
     <>
       <button
@@ -74,9 +73,7 @@ const CommonDropdownTrigger = memo(({ children }) => {
       </button>
     </>
   );
-});
-
-CommonDropdownTrigger.displayName = "CommonDropdownTrigger";
+};
 
 export const Dashboard = () => {
   const [checkedDataset, setCheckedDataset] = useState(datasetOptions[0].value);
@@ -92,8 +89,6 @@ export const Dashboard = () => {
   const [filtersState, setFiltersState] = useState({});
 
   const data = useData(`data/${checkedDataset}.json`);
-
-  //   console.log(data);
 
   const currentDataset = datasetOptions.find(
     ({ value }) => value === checkedDataset
@@ -142,8 +137,6 @@ export const Dashboard = () => {
     [data, pivotColumn, measureOptions, checkedSummaryColumns]
   );
 
-  console.log(chartData);
-
   const chartOptions = useMemo(
     () =>
       getChartOptions({
@@ -184,8 +177,6 @@ export const Dashboard = () => {
 
     setFiltersState(filterSets);
   }, [filterSets]);
-
-  //   console.log(chartData);
 
   return (
     <>
@@ -245,31 +236,18 @@ export const Dashboard = () => {
             }
           ></Dropdown>
           <Dropdown
-            menuContent={
-              <div className="px-2 d-flex flex-column gap-2">
-                {typeof filtersState === "object" &&
-                  Object.keys(filtersState).map((key) => (
-                    <Dropdown
-                      menuContent={
-                        <div className="d-flex px-2 flex-column gap-2">
-                          {filterArrays[key]?.map((value) => (
-                            <div key={value}>{value}</div>
-                          ))}
-                        </div>
-                      }
-                      trigger={
-                        <CommonDropdownTrigger>
-                          {toTitleCase(key)}
-                        </CommonDropdownTrigger>
-                      }
-                      className="dropend"
-                      key={key}
-                    ></Dropdown>
-                  ))}
-              </div>
+            trigger={
+              <button
+                className="btn btn-secondary dropdown-toggle w-100"
+                data-bs-auto-close="outside"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                type="button"
+              >
+                Filters
+              </button>
             }
-            trigger={<CommonDropdownTrigger>Filters</CommonDropdownTrigger>}
-            className="dropend"
+            menuContent={<>Chance</>}
           ></Dropdown>
         </div>
         <div className="bg-success-subtle d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">

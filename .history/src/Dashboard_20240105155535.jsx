@@ -10,7 +10,6 @@ import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
 import { wrapBreakpoint } from "./constants/wrapBreakpoint";
 import { defaultColDef } from "./constants/defaultColDef";
-import { toTitleCase } from "./functions/toTitleCase";
 import { pivotData } from "./functions/pivotData";
 import { Dropdown } from "./components/Dropdown";
 import { Chart } from "./components/Chart";
@@ -93,8 +92,6 @@ export const Dashboard = () => {
 
   const data = useData(`data/${checkedDataset}.json`);
 
-  //   console.log(data);
-
   const currentDataset = datasetOptions.find(
     ({ value }) => value === checkedDataset
   );
@@ -142,8 +139,6 @@ export const Dashboard = () => {
     [data, pivotColumn, measureOptions, checkedSummaryColumns]
   );
 
-  console.log(chartData);
-
   const chartOptions = useMemo(
     () =>
       getChartOptions({
@@ -184,8 +179,6 @@ export const Dashboard = () => {
 
     setFiltersState(filterSets);
   }, [filterSets]);
-
-  //   console.log(chartData);
 
   return (
     <>
@@ -245,31 +238,8 @@ export const Dashboard = () => {
             }
           ></Dropdown>
           <Dropdown
-            menuContent={
-              <div className="px-2 d-flex flex-column gap-2">
-                {typeof filtersState === "object" &&
-                  Object.keys(filtersState).map((key) => (
-                    <Dropdown
-                      menuContent={
-                        <div className="d-flex px-2 flex-column gap-2">
-                          {filterArrays[key]?.map((value) => (
-                            <div key={value}>{value}</div>
-                          ))}
-                        </div>
-                      }
-                      trigger={
-                        <CommonDropdownTrigger>
-                          {toTitleCase(key)}
-                        </CommonDropdownTrigger>
-                      }
-                      className="dropend"
-                      key={key}
-                    ></Dropdown>
-                  ))}
-              </div>
-            }
             trigger={<CommonDropdownTrigger>Filters</CommonDropdownTrigger>}
-            className="dropend"
+            menuContent={<>{Object.keys(filtersState).map((key) => <div>key</div>>)}</>}
           ></Dropdown>
         </div>
         <div className="bg-success-subtle d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">

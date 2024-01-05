@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { startTransition, memo } from "react";
 
 import { CheckboxListGroupItem } from "./CheckboxListGroupItem";
 import { isLengthyString } from "../functions/isLengthyString";

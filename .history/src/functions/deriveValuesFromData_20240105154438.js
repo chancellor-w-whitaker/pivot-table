@@ -81,12 +81,12 @@ export const deriveValuesFromData = (data, pivotColumn) => {
     Object.entries(filterSets).map(([key, set]) => [key, [...set].sort()])
   );
 
+  console.log(filterSets, filterArrays);
+
   return {
     summaryColumnOptions,
     setOfSummaryColumns,
     measureOptions,
     allColumnDefs,
-    filterArrays,
-    filterSets,
   };
 };

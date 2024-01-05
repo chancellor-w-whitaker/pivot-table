@@ -16,12 +16,7 @@ export const getChartOptions = ({
         })
       : Math.round(value).toLocaleString();
 
-  const dataOption = !dataContainsRates
-    ? chartData
-    : chartData.map((row) => ({
-        ...row,
-        [checkedMeasure]: row[checkedMeasure] / row.total,
-      }));
+  const dataOption = chartData;
 
   const regressionData = dataOption.map((obj, index) => [
     index + 1,
@@ -48,7 +43,10 @@ export const getChartOptions = ({
           },
         },
         label: {
-          formatter: ({ value }) => formatNumber(value),
+          formatter: ({ value, datum, yKey }) =>
+            `${datum[yKey] / datum.total} (${
+              datum[yKey] + " / " + datum.total
+            })`,
         },
         yKey: checkedMeasure,
         xKey: pivotColumn,

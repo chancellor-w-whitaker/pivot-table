@@ -6,7 +6,7 @@ export const deriveValuesFromData = (data, pivotColumn) => {
 
     const pivotValues = new Set();
 
-    const filterSets = {};
+    const dropdownFilters = {};
 
     data.forEach((row) => {
       Object.keys(row).forEach((column) => {
@@ -24,21 +24,20 @@ export const deriveValuesFromData = (data, pivotColumn) => {
 
         if (column === pivotColumn) pivotValues.add(value);
 
-        if (!(column in filterSets)) filterSets[column] = new Set();
+        if (!(column in dropdownFilters)) dropdownFilters[column] = new Set();
 
-        filterSets[column].add(value);
+        dropdownFilters[column].add(value);
       });
     });
 
     return {
       columnTypesCounted: colTypesObject,
       setOfPivotValues: pivotValues,
-      filterSets,
+      dropdownFilters,
     };
   };
 
-  const { columnTypesCounted, setOfPivotValues, filterSets } =
-    iterateData(data);
+  const { columnTypesCounted, setOfPivotValues } = iterateData(data);
 
   const getMostFrequentType = (typesObject) =>
     Object.entries(typesObject).sort(
@@ -75,18 +74,10 @@ export const deriveValuesFromData = (data, pivotColumn) => {
     ...pivotValues.map((field) => ({ field })),
   ];
 
-  measureOptions.forEach(({ value }) => delete filterSets[value]);
-
-  const filterArrays = Object.fromEntries(
-    Object.entries(filterSets).map(([key, set]) => [key, [...set].sort()])
-  );
-
   return {
     summaryColumnOptions,
     setOfSummaryColumns,
     measureOptions,
     allColumnDefs,
-    filterArrays,
-    filterSets,
   };
 };

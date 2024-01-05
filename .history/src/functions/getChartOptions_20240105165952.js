@@ -16,12 +16,7 @@ export const getChartOptions = ({
         })
       : Math.round(value).toLocaleString();
 
-  const dataOption = !dataContainsRates
-    ? chartData
-    : chartData.map((row) => ({
-        ...row,
-        [checkedMeasure]: row[checkedMeasure] / row.total,
-      }));
+  const dataOption = chartData;
 
   const regressionData = dataOption.map((obj, index) => [
     index + 1,
@@ -42,13 +37,16 @@ export const getChartOptions = ({
     // Series: Defines which chart type and data to use
     series: [
       {
+        label: {
+          formatter: ({ value, datum, yKey }) =>
+            `${datum[yKey] / datum.total} (${
+              datum[yKey] + " / " + datum.total
+            })`,
+        },
         tooltip: {
           renderer: ({ datum, xKey, yKey }) => {
             return { content: formatNumber(datum[yKey]), title: datum[xKey] };
           },
-        },
-        label: {
-          formatter: ({ value }) => formatNumber(value),
         },
         yKey: checkedMeasure,
         xKey: pivotColumn,

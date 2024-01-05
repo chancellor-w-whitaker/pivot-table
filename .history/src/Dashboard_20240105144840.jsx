@@ -1,16 +1,14 @@
-import { useLayoutEffect, useState, useMemo, memo } from "react";
+import { useLayoutEffect, useState, useMemo } from "react";
 
 import { deriveValuesFromData } from "./functions/deriveValuesFromData";
 import { getPivotColumnDefs } from "./functions/getPivotColumnDefs";
 import { CheckboxListGroup } from "./components/CheckboxListGroup";
-import { regressionOptions } from "./constants/regressionOptions";
 import { getChartOptions } from "./functions/getChartOptions";
 import { RadioListGroup } from "./components/RadioListGroup";
 import { datasetOptions } from "./constants/datasetOptions";
 import { isLengthyArray } from "./functions/isLengthyArray";
 import { wrapBreakpoint } from "./constants/wrapBreakpoint";
 import { defaultColDef } from "./constants/defaultColDef";
-import { toTitleCase } from "./functions/toTitleCase";
 import { pivotData } from "./functions/pivotData";
 import { Dropdown } from "./components/Dropdown";
 import { Chart } from "./components/Chart";
@@ -60,40 +58,24 @@ chart
 // ! is rendering performance okay? (do you need to memoize components?)
 // ! should you fetch data in event handler instead? (would then need to simulate a click on dataset option 1 in initial use effect)
 
-const CommonDropdownTrigger = memo(({ children }) => {
-  return (
-    <>
-      <button
-        className="btn btn-secondary dropdown-toggle w-100"
-        data-bs-auto-close="outside"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-        type="button"
-      >
-        {children}
-      </button>
-    </>
-  );
-});
-
-CommonDropdownTrigger.displayName = "CommonDropdownTrigger";
+const regressionOptions = [
+  { value: "linear", label: "Linear" },
+  { value: "exponential", label: "Exponential" },
+  { value: "logarithmic", label: "Logarithmic" },
+  { value: "power", label: "Power" },
+  { value: "polynomial", label: "Polynomial" },
+];
 
 export const Dashboard = () => {
+  const [checkedRegression, setCheckedRegression] = useState("linear");
+
   const [checkedDataset, setCheckedDataset] = useState(datasetOptions[0].value);
 
   const [checkedMeasure, setCheckedMeasure] = useState("");
 
-  const [checkedRegression, setCheckedRegression] = useState(
-    regressionOptions[0].value
-  );
-
   const [checkedSummaryColumns, setCheckedSummaryColumns] = useState(new Set());
 
-  const [filtersState, setFiltersState] = useState({});
-
   const data = useData(`data/${checkedDataset}.json`);
-
-  //   console.log(data);
 
   const currentDataset = datasetOptions.find(
     ({ value }) => value === checkedDataset
@@ -110,8 +92,6 @@ export const Dashboard = () => {
     setOfSummaryColumns,
     measureOptions,
     allColumnDefs,
-    filterArrays,
-    filterSets,
   } = useMemo(
     () =>
       !isLengthyArray(data) ? {} : deriveValuesFromData(data, pivotColumn),
@@ -142,8 +122,6 @@ export const Dashboard = () => {
     [data, pivotColumn, measureOptions, checkedSummaryColumns]
   );
 
-  console.log(chartData);
-
   const chartOptions = useMemo(
     () =>
       getChartOptions({
@@ -156,10 +134,10 @@ export const Dashboard = () => {
       }),
     [
       chartData,
-      pivotColumn,
-      datasetTitle,
       checkedMeasure,
+      pivotColumn,
       dataContainsRates,
+      datasetTitle,
       checkedRegression,
     ]
   );
@@ -178,15 +156,6 @@ export const Dashboard = () => {
     resetCheckboxState(summaryColumnOptions);
   }, [summaryColumnOptions]);
 
-  useLayoutEffect(() => {
-    // const resetCheckboxState = (arr) =>
-    //   isLengthyArray(arr) && setCheckedSummaryColumns(new Set([arr[0].value]));
-
-    setFiltersState(filterSets);
-  }, [filterSets]);
-
-  //   console.log(chartData);
-
   return (
     <>
       <div
@@ -195,92 +164,99 @@ export const Dashboard = () => {
         <div
           className={`bg-warning-subtle d-flex gap-3 p-3 rounded shadow-sm flex-row flex-${wrapBreakpoint}-column flex-wrap flex-fill`}
         >
-          <Dropdown
-            menuContent={
-              <RadioListGroup
-                className="text-nowrap list-group-flush"
-                setCheckedValue={setCheckedDataset}
-                checkedValue={checkedDataset}
-                options={datasetOptions}
-                name="dataset"
-              ></RadioListGroup>
-            }
-            trigger={<CommonDropdownTrigger>Dataset</CommonDropdownTrigger>}
-          ></Dropdown>
-          <Dropdown
-            menuContent={
-              <RadioListGroup
-                className="text-nowrap list-group-flush"
-                setCheckedValue={setCheckedMeasure}
-                checkedValue={checkedMeasure}
-                options={measureOptions}
-                name="measure"
-              ></RadioListGroup>
-            }
-            trigger={<CommonDropdownTrigger>Measure</CommonDropdownTrigger>}
-          ></Dropdown>
-          <Dropdown
-            menuContent={
-              <RadioListGroup
-                className="text-nowrap list-group-flush"
-                setCheckedValue={setCheckedRegression}
-                checkedValue={checkedRegression}
-                options={regressionOptions}
-                name="regression"
-              ></RadioListGroup>
-            }
-            trigger={<CommonDropdownTrigger>Regression</CommonDropdownTrigger>}
-          ></Dropdown>
-          <Dropdown
-            menuContent={
-              <CheckboxListGroup
-                setCheckedValues={setCheckedSummaryColumns}
-                className="text-nowrap list-group-flush"
-                checkedValues={checkedSummaryColumns}
-                options={summaryColumnOptions}
-              ></CheckboxListGroup>
-            }
-            trigger={
-              <CommonDropdownTrigger>Summary Columns</CommonDropdownTrigger>
-            }
-          ></Dropdown>
-          <Dropdown
-            menuContent={
-              <div className="px-2 d-flex flex-column gap-2">
-                {typeof filtersState === "object" &&
-                  Object.keys(filtersState).map((key) => (
-                    <Dropdown
-                      menuContent={
-                        <div className="d-flex px-2 flex-column gap-2">
-                          {filterArrays[key]?.map((value) => (
-                            <div key={value}>{value}</div>
-                          ))}
-                        </div>
-                      }
-                      trigger={
-                        <CommonDropdownTrigger>
-                          {toTitleCase(key)}
-                        </CommonDropdownTrigger>
-                      }
-                      className="dropend"
-                      key={key}
-                    ></Dropdown>
-                  ))}
-              </div>
-            }
-            trigger={<CommonDropdownTrigger>Filters</CommonDropdownTrigger>}
-            className="dropend"
-          ></Dropdown>
+          <div className="d-flex flex-column gap-2">
+            <Dropdown
+              trigger={
+                <div
+                  className="btn btn-secondary dropdown-toggle w-100"
+                  data-bs-auto-close="outside"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  type="button"
+                >
+                  Dataset
+                </div>
+              }
+              menuContent={
+                <RadioListGroup
+                  className="text-nowrap list-group-flush"
+                  setCheckedValue={setCheckedDataset}
+                  checkedValue={checkedDataset}
+                  options={datasetOptions}
+                  name="dataset"
+                ></RadioListGroup>
+              }
+            ></Dropdown>
+          </div>
+          <div className="d-flex flex-column gap-2">
+            <Dropdown
+              trigger={
+                <div
+                  className="btn btn-secondary dropdown-toggle w-100"
+                  data-bs-auto-close="outside"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  type="button"
+                >
+                  Measure
+                </div>
+              }
+              menuContent={
+                <RadioListGroup
+                  setCheckedValue={setCheckedMeasure}
+                  className="shadow-sm text-nowrap"
+                  checkedValue={checkedMeasure}
+                  options={measureOptions}
+                  name="measure"
+                ></RadioListGroup>
+              }
+            ></Dropdown>
+          </div>
+          <div className="d-flex flex-column gap-2">
+            <Dropdown
+              trigger={
+                <div
+                  className="btn btn-secondary dropdown-toggle w-100"
+                  data-bs-auto-close="outside"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  type="button"
+                >
+                  Regression
+                </div>
+              }
+              menuContent={
+                <RadioListGroup
+                  setCheckedValue={setCheckedRegression}
+                  className="shadow-sm text-nowrap"
+                  checkedValue={checkedRegression}
+                  options={regressionOptions}
+                  name="regression"
+                ></RadioListGroup>
+              }
+            ></Dropdown>
+          </div>
+          <div className="d-flex flex-column gap-2">
+            {isLengthyArray(summaryColumnOptions) && (
+              <div className="lh-1 fs-5">Summary Columns</div>
+            )}
+            <CheckboxListGroup
+              setCheckedValues={setCheckedSummaryColumns}
+              checkedValues={checkedSummaryColumns}
+              className="shadow-sm text-nowrap"
+              options={summaryColumnOptions}
+            ></CheckboxListGroup>
+          </div>
         </div>
         <div className="bg-success-subtle d-flex gap-3 p-3 rounded shadow-sm flex-column w-100">
           <div className="d-flex flex-column gap-2">
-            {/* <div className="lh-1 fs-5">Bar Chart</div> */}
+            <div className="lh-1 fs-5">Bar Chart</div>
             <div className="rounded shadow-sm overflow-hidden w-100">
               <Chart options={chartOptions}></Chart>
             </div>
           </div>
           <div className="d-flex flex-column gap-2">
-            {/* <div className="lh-1 fs-5">Pivot Table</div> */}
+            <div className="lh-1 fs-5">Pivot Table</div>
             <div className="ag-theme-quartz" style={{ height: 500 }}>
               <Grid
                 defaultColDef={defaultColDef}

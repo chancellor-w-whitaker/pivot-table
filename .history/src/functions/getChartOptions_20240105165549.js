@@ -48,7 +48,7 @@ export const getChartOptions = ({
           },
         },
         label: {
-          formatter: ({ value }) => formatNumber(value),
+          formatter: (obj) => console.log(obj),
         },
         yKey: checkedMeasure,
         xKey: pivotColumn,

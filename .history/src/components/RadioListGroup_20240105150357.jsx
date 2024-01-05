@@ -1,10 +1,9 @@
 import { memo } from "react";
 
-import { CheckboxListGroupItem } from "./CheckboxListGroupItem";
 import { isLengthyString } from "../functions/isLengthyString";
 
-export const CheckboxListGroup = memo(
-  ({ setCheckedValues, checkedValues, className, options }) => {
+export const RadioListGroup = memo(
+  ({ setCheckedValue, checkedValue, className, options, name }) => {
     const defaultClassName = "list-group";
 
     const entireClassName = isLengthyString(className)
@@ -15,11 +14,11 @@ export const CheckboxListGroup = memo(
       <>
         <div className={entireClassName}>
           {options?.map(({ value, label }) => (
-            <CheckboxListGroupItem
-              checked={checkedValues.has(value)}
+            <RadioListGroupItem
+              checked={value === checkedValue}
               key={value}
-              {...{ setCheckedValues, value, label }}
-            ></CheckboxListGroupItem>
+              {...{ setCheckedValue, value, label, name }}
+            ></RadioListGroupItem>
           ))}
         </div>
       </>
@@ -27,4 +26,4 @@ export const CheckboxListGroup = memo(
   }
 );
 
-CheckboxListGroup.displayName = "CheckboxListGroup";
+RadioListGroup.displayName = "RadioListGroup";

@@ -1,4 +1,5 @@
-import { getRegressionResult } from "./getRegressionResult";
+import regression from "regression";
+
 import { toTitleCase } from "./toTitleCase";
 
 export const getChartOptions = ({
@@ -37,6 +38,8 @@ export const getChartOptions = ({
     ...obj,
     "regression value": regressionResult.points[index][1],
   }));
+
+  console.log(finalData);
 
   return {
     // Series: Defines which chart type and data to use

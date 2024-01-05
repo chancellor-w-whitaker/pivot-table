@@ -48,7 +48,8 @@ export const getChartOptions = ({
           },
         },
         label: {
-          formatter: ({ value }) => formatNumber(value),
+          formatter: ({ value, datum, yKey }) =>
+            `${formatNumber(value)} (${datum[yKey] / datum.total})`,
         },
         yKey: checkedMeasure,
         xKey: pivotColumn,

@@ -38,6 +38,8 @@ export const getChartOptions = ({
     "regression value": regressionResult.points[index][1],
   }));
 
+  console.log(finalData);
+
   return {
     // Series: Defines which chart type and data to use
     series: [

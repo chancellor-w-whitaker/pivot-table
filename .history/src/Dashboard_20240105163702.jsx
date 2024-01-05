@@ -93,7 +93,7 @@ export const Dashboard = () => {
 
   const data = useData(`data/${checkedDataset}.json`);
 
-  //   console.log(data);
+  console.log(data);
 
   const currentDataset = datasetOptions.find(
     ({ value }) => value === checkedDataset
@@ -142,8 +142,6 @@ export const Dashboard = () => {
     [data, pivotColumn, measureOptions, checkedSummaryColumns]
   );
 
-  console.log(chartData);
-
   const chartOptions = useMemo(
     () =>
       getChartOptions({
@@ -185,7 +183,7 @@ export const Dashboard = () => {
     setFiltersState(filterSets);
   }, [filterSets]);
 
-  //   console.log(chartData);
+  console.log(chartData);
 
   return (
     <>

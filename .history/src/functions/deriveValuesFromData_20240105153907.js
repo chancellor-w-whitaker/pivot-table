@@ -77,16 +77,13 @@ export const deriveValuesFromData = (data, pivotColumn) => {
 
   measureOptions.forEach(({ value }) => delete filterSets[value]);
 
-  const filterArrays = Object.fromEntries(
-    Object.entries(filterSets).map(([key, set]) => [key, [...set].sort()])
-  );
+  console.log(filterSets);
 
   return {
+    initialDropdownFilter,
     summaryColumnOptions,
     setOfSummaryColumns,
     measureOptions,
     allColumnDefs,
-    filterArrays,
-    filterSets,
   };
 };
